@@ -120,11 +120,14 @@ function render() {
 }
 
 function renderGroup(key, g) {
+    const totalMin = g.items.reduce((sum, t) => sum + (t.duration_minutes || 0), 0);
+    const timeTotal = totalMin > 0 ? `<span class="group-time">⏱ ${labelDuration(totalMin)}</span>` : '';
     return `
         <div class="task-group ${g.cls}" data-group="${key}">
             <div class="group-header">
                 <h2>${g.label}</h2>
                 <span class="group-count">${g.items.length}</span>
+                ${timeTotal}
             </div>
             <div class="task-list-inner" id="list-${key}">
                 ${g.items.map(renderTodo).join('')}

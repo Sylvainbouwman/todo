@@ -215,6 +215,13 @@ main { padding: 16px 20px; }
     border-radius: 99px;
 }
 
+.group-time {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-left: auto;
+}
+
 .group-today .group-header h2 { color: var(--amber); }
 .group-overdue .group-header h2 { color: var(--red); }
 
