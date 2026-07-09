@@ -117,11 +117,6 @@ function render() {
             onEnd: () => saveOrder(key),
         }));
     }
-
-    // Klik buiten modal sluit hem
-    document.getElementById('modal-overlay').addEventListener('click', (e) => {
-        if (e.target === document.getElementById('modal-overlay')) closeModal();
-    });
 }
 
 function renderGroup(key, g) {
@@ -295,6 +290,9 @@ async function load() {
 document.getElementById('btn-add').addEventListener('click', openAdd);
 document.getElementById('btn-cancel').addEventListener('click', closeModal);
 document.getElementById('task-form').addEventListener('submit', onSubmit);
+document.getElementById('modal-overlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeModal();
