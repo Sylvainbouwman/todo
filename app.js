@@ -125,18 +125,18 @@ function render() {
         summary.textContent = parts.join(' · ');
     }
 
-    // Drag-and-drop per groep (behalve klaar)
+    // Drag-and-drop — group:'tasks' maakt slepen tussen dagengroepen mogelijk
     for (const g of groups) {
         if (g.key === 'done') continue;
         const el = document.getElementById('list-' + g.key);
         if (!el) continue;
-        const key = g.key;
         sortables.push(Sortable.create(el, {
             animation: 150,
             handle: '.drag-handle',
             ghostClass: 'sortable-ghost',
             chosenClass: 'sortable-chosen',
-            onEnd: () => saveOrder(key),
+            group: 'tasks',
+            onEnd: handleDragEnd,
         }));
     }
 }
@@ -278,6 +278,29 @@ function undoDelete() {
     todos.push(todo);
     todos.sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
     render();
+}
+
+function dateFromGroupKey(key) {
+    if (key.startsWith('date-')) return key.slice(5); // 'date-2026-07-10' → '2026-07-10'
+    return null; // 'none' groep: geen datum
+}
+
+async function handleDragEnd(evt) {
+    const fromKey = evt.from.id.replace('list-', '');
+    const toKey   = evt.to.id.replace('list-', '');
+    const movedId = evt.item.dataset.id;
+
+    if (fromKey !== toKey) {
+        const newDate = dateFromGroupKey(toKey);
+        const todo = todos.find(t => t.id === movedId);
+        if (todo) {
+            todo.due_date = newDate;
+            await db.from('todos').update({ due_date: newDate }).eq('id', movedId);
+        }
+        render(); // hergroepeer na datumwijziging
+    } else {
+        saveOrder(toKey);
+    }
 }
 
 async function saveOrder(groupKey) {
