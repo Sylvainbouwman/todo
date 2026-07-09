@@ -242,10 +242,45 @@ async function markDone(id, completed) {
     if (error) { todo.completed = !completed; render(); }
 }
 
-async function deleteTodo(id) {
+let pendingDelete = null;
+
+function deleteTodo(id) {
+    const todo = todos.find(t => t.id === id);
+    if (!todo) return;
+
+    // Annuleer een eventuele vorige pending delete eerst
+    if (pendingDelete) commitDelete();
+
     todos = todos.filter(t => t.id !== id);
     render();
-    await db.from('todos').delete().eq('id', id);
+
+    document.getElementById('undo-label').textContent = `"${todo.title}" verwijderd.`;
+    document.getElementById('undo-toast').classList.remove('hidden');
+
+    pendingDelete = {
+        todo,
+        timer: setTimeout(() => { commitDelete(); }, 6000),
+    };
+}
+
+async function commitDelete() {
+    if (!pendingDelete) return;
+    const { todo, timer } = pendingDelete;
+    clearTimeout(timer);
+    pendingDelete = null;
+    document.getElementById('undo-toast').classList.add('hidden');
+    await db.from('todos').delete().eq('id', todo.id);
+}
+
+function undoDelete() {
+    if (!pendingDelete) return;
+    const { todo, timer } = pendingDelete;
+    clearTimeout(timer);
+    pendingDelete = null;
+    document.getElementById('undo-toast').classList.add('hidden');
+    todos.push(todo);
+    todos.sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+    render();
 }
 
 async function saveOrder(groupKey) {
@@ -338,6 +373,8 @@ document.getElementById('task-form').addEventListener('submit', onSubmit);
 document.getElementById('modal-overlay').addEventListener('click', (e) => {
     if (e.target === document.getElementById('modal-overlay')) closeModal();
 });
+
+document.getElementById('undo-btn').addEventListener('click', undoDelete);
 
 document.getElementById('confirm-yes').addEventListener('click', () => {
     document.getElementById('confirm-overlay').classList.add('hidden');
