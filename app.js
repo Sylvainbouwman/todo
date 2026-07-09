@@ -41,15 +41,20 @@ function labelDuration(min) {
 
 // ---- Groeperen ----
 
+function shortDate(dateStr) {
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('nl-NL', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
 function buildGroups(todos) {
     const t = todayStr();
     const groups = {
-        overdue:  { label: 'Te laat',    cls: 'group-overdue', items: [] },
-        today:    { label: 'Vandaag',    cls: 'group-today',   items: [] },
-        tomorrow: { label: 'Morgen',     cls: '',              items: [] },
-        later:    { label: 'Later',      cls: '',              items: [] },
-        none:     { label: 'Geen datum', cls: '',              items: [] },
-        done:     { label: 'Klaar',      cls: '',              items: [] },
+        overdue:  { label: 'Te laat',    sub: null,              cls: 'group-overdue', items: [] },
+        today:    { label: 'Vandaag',    sub: shortDate(t),      cls: 'group-today',   items: [] },
+        tomorrow: { label: 'Morgen',     sub: shortDate(offsetDay(1)), cls: '',         items: [] },
+        later:    { label: 'Later',      sub: null,              cls: '',              items: [] },
+        none:     { label: 'Geen datum', sub: null,              cls: '',              items: [] },
+        done:     { label: 'Klaar',      sub: null,              cls: '',              items: [] },
     };
 
     for (const todo of todos) {
@@ -122,10 +127,12 @@ function render() {
 function renderGroup(key, g) {
     const totalMin = g.items.reduce((sum, t) => sum + (t.duration_minutes || 0), 0);
     const timeTotal = totalMin > 0 ? `<span class="group-time">⏱ ${labelDuration(totalMin)}</span>` : '';
+    const sub = g.sub ? `<span class="group-sub">${g.sub}</span>` : '';
     return `
         <div class="task-group ${g.cls}" data-group="${key}">
             <div class="group-header">
                 <h2>${g.label}</h2>
+                ${sub}
                 <span class="group-count">${g.items.length}</span>
                 ${timeTotal}
             </div>

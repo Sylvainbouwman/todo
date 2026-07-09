@@ -215,6 +215,12 @@ main { padding: 16px 20px; }
     border-radius: 99px;
 }
 
+.group-sub {
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
 .group-time {
     font-size: 0.72rem;
     font-weight: 600;
