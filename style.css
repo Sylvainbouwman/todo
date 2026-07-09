@@ -192,19 +192,27 @@ select:focus { border-color: var(--primary); }
 /* Task list */
 main { padding: 16px 20px; }
 
+@media (min-width: 560px) {
+    .task-group {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--primary);
+        border-radius: var(--radius);
+        padding: 14px 14px 10px;
+    }
+
+    .task-group.group-overdue { border-left-color: var(--red); }
+    .task-group.group-today   { border-left-color: var(--amber); background: #FFFDF5; }
+    .task-group[data-group="none"],
+    .task-group[data-group="done"] { border-left-color: var(--border); }
+}
+
 @media (min-width: 860px) {
     main {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 16px;
         align-items: start;
-    }
-
-    .task-group {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 14px 14px 10px;
     }
 
     .task-group[data-group="none"],
@@ -222,13 +230,6 @@ main { padding: 16px 20px; }
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
         align-items: start;
-    }
-
-    .task-group {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 14px 14px 10px;
     }
 
     .task-group[data-group="none"],
