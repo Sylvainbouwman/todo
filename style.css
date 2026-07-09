@@ -430,9 +430,9 @@ main { padding: 16px 20px; }
 .drag-handle:active { cursor: grabbing; }
 
 .task-check {
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--border);
+    width: 26px;
+    height: 26px;
+    border: 2.5px solid #9CA3AF;
     border-radius: 50%;
     cursor: pointer;
     flex-shrink: 0;
@@ -440,11 +440,12 @@ main { padding: 16px 20px; }
     align-items: center;
     justify-content: center;
     transition: all 0.15s;
+    background: #fff;
 }
 
-.task-check:hover { border-color: var(--green); }
+.task-check:hover { border-color: var(--green); background: #F0FDF4; }
 .task-check.done { background: var(--green); border-color: var(--green); }
-.task-check.done::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
+.task-check.done::after { content: '✓'; color: #fff; font-size: 13px; font-weight: 700; }
 
 .task-body {
     flex: 1;
@@ -481,10 +482,10 @@ main { padding: 16px 20px; }
     background: none;
     border: none;
     color: #D1D5DB;
-    font-size: 1.15rem;
+    font-size: 0.95rem;
     line-height: 1;
     cursor: pointer;
-    padding: 3px 5px;
+    padding: 4px 6px;
     border-radius: 5px;
     flex-shrink: 0;
     transition: color 0.15s, background 0.15s;

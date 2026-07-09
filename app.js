@@ -194,7 +194,7 @@ function renderTodo(todo) {
                 <div class="task-title">${escape(todo.title)}</div>
                 ${chips.length ? `<div class="task-meta">${chips.join('')}</div>` : ''}
             </div>
-            <button class="task-del" onclick="deleteTodo('${todo.id}')" title="Verwijderen">×</button>
+            <button class="task-del" onclick="deleteTodo('${todo.id}')" title="Verwijderen">🗑</button>
         </div>`;
 }
 
@@ -215,9 +215,7 @@ function toggleDone() {
 let confirmPendingId = null;
 
 function toggleDone_task(id) {
-    console.log('toggleDone_task aangeroepen, id:', id);
     const todo = todos.find(t => t.id === id);
-    console.log('todo gevonden:', todo);
     if (!todo) return;
 
     if (todo.completed) {
@@ -226,12 +224,8 @@ function toggleDone_task(id) {
     }
 
     confirmPendingId = id;
-    const nameEl = document.getElementById('confirm-task-name');
-    const overlayEl = document.getElementById('confirm-overlay');
-    console.log('nameEl:', nameEl, 'overlayEl:', overlayEl);
-    if (nameEl) nameEl.textContent = `"${todo.title}"`;
-    if (overlayEl) overlayEl.classList.remove('hidden');
-    console.log('overlay class na remove:', overlayEl && overlayEl.className);
+    document.getElementById('confirm-task-name').textContent = `"${todo.title}"`;
+    document.getElementById('confirm-overlay').classList.remove('hidden');
 }
 
 async function markDone(id, completed) {
