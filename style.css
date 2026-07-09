@@ -189,6 +189,79 @@ select:focus { border-color: var(--primary); }
 .modal-actions button[type="submit"] { background: var(--primary); color: #fff; }
 .modal-actions button[type="submit"]:hover { background: #4338CA; }
 
+/* Bevestigingsdialog */
+#confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(2px);
+}
+
+#confirm-overlay.hidden { display: none; }
+
+#confirm-dialog {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 28px 24px 24px;
+    width: 100%;
+    max-width: 340px;
+    text-align: center;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
+    animation: modal-in 0.2s ease;
+}
+
+.confirm-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--green);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+}
+
+#confirm-dialog h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+#confirm-dialog p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    word-break: break-word;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.confirm-actions button {
+    padding: 9px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: all 0.15s;
+}
+
+#confirm-no  { background: var(--bg); color: var(--text-muted); }
+#confirm-no:hover { background: var(--border); }
+#confirm-yes { background: var(--green); color: #fff; }
+#confirm-yes:hover { background: #0EA472; }
+
 /* Task list */
 main { padding: 16px 20px; }
 

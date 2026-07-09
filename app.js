@@ -212,16 +212,34 @@ function toggleDone() {
 
 // ---- Acties ----
 
-async function toggleDone_task(id) {
+let confirmPendingId = null;
+
+function toggleDone_task(id) {
     const todo = todos.find(t => t.id === id);
     if (!todo) return;
-    todo.completed = !todo.completed;
+
+    if (todo.completed) {
+        // Terugzetten naar actief: geen bevestiging nodig
+        markDone(id, false);
+        return;
+    }
+
+    // Afvinken: bevestiging vragen
+    confirmPendingId = id;
+    document.getElementById('confirm-task-name').textContent = `"${todo.title}"`;
+    document.getElementById('confirm-overlay').classList.remove('hidden');
+}
+
+async function markDone(id, completed) {
+    const todo = todos.find(t => t.id === id);
+    if (!todo) return;
+    todo.completed = completed;
     render();
     const { error } = await db.from('todos').update({
-        completed: todo.completed,
-        completed_at: todo.completed ? new Date().toISOString() : null,
+        completed,
+        completed_at: completed ? new Date().toISOString() : null,
     }).eq('id', id);
-    if (error) { todo.completed = !todo.completed; render(); }
+    if (error) { todo.completed = !completed; render(); }
 }
 
 async function deleteTodo(id) {
@@ -319,6 +337,22 @@ document.getElementById('btn-cancel').addEventListener('click', closeModal);
 document.getElementById('task-form').addEventListener('submit', onSubmit);
 document.getElementById('modal-overlay').addEventListener('click', (e) => {
     if (e.target === document.getElementById('modal-overlay')) closeModal();
+});
+
+document.getElementById('confirm-yes').addEventListener('click', () => {
+    document.getElementById('confirm-overlay').classList.add('hidden');
+    if (confirmPendingId) markDone(confirmPendingId, true);
+    confirmPendingId = null;
+});
+document.getElementById('confirm-no').addEventListener('click', () => {
+    document.getElementById('confirm-overlay').classList.add('hidden');
+    confirmPendingId = null;
+});
+document.getElementById('confirm-overlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('confirm-overlay')) {
+        document.getElementById('confirm-overlay').classList.add('hidden');
+        confirmPendingId = null;
+    }
 });
 
 document.addEventListener('keydown', (e) => {
