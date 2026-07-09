@@ -215,19 +215,23 @@ function toggleDone() {
 let confirmPendingId = null;
 
 function toggleDone_task(id) {
+    console.log('toggleDone_task aangeroepen, id:', id);
     const todo = todos.find(t => t.id === id);
+    console.log('todo gevonden:', todo);
     if (!todo) return;
 
     if (todo.completed) {
-        // Terugzetten naar actief: geen bevestiging nodig
         markDone(id, false);
         return;
     }
 
-    // Afvinken: bevestiging vragen
     confirmPendingId = id;
-    document.getElementById('confirm-task-name').textContent = `"${todo.title}"`;
-    document.getElementById('confirm-overlay').classList.remove('hidden');
+    const nameEl = document.getElementById('confirm-task-name');
+    const overlayEl = document.getElementById('confirm-overlay');
+    console.log('nameEl:', nameEl, 'overlayEl:', overlayEl);
+    if (nameEl) nameEl.textContent = `"${todo.title}"`;
+    if (overlayEl) overlayEl.classList.remove('hidden');
+    console.log('overlay class na remove:', overlayEl && overlayEl.className);
 }
 
 async function markDone(id, completed) {
