@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ToDo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>ToDo</h1>
+            <button id="btn-add" title="Nieuwe taak (N)">+</button>
+        </header>
+
+        <!-- Modal voor toevoegen / bewerken -->
+        <div id="modal-overlay" class="hidden">
+            <div id="modal">
+                <h2 id="modal-title">Nieuwe taak</h2>
+                <form id="task-form">
+                    <input type="text" id="task-title" placeholder="Wat moet je doen?" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="task-date">Dag</label>
+                            <input type="date" id="task-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="task-time">Tijdstip</label>
+                            <input type="time" id="task-time">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-duration">Tijdsduur</label>
+                        <select id="task-duration">
+                            <option value="">Geen schatting</option>
+                            <option value="15">15 min</option>
+                            <option value="30">30 min</option>
+                            <option value="45">45 min</option>
+                            <option value="60">1 uur</option>
+                            <option value="90">1,5 uur</option>
+                            <option value="120">2 uur</option>
+                            <option value="180">3 uur</option>
+                            <option value="240">4 uur</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" id="btn-cancel">Annuleer</button>
+                        <button type="submit">Opslaan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Taakoverzicht -->
+        <main id="task-list">
+            <div class="loading">Laden…</div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
