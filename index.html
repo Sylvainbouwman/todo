@@ -54,19 +54,6 @@
             </div>
         </div>
 
-        <!-- Bevestigingsdialog afvinken -->
-        <div id="confirm-overlay" class="hidden">
-            <div id="confirm-dialog">
-                <div class="confirm-icon">✓</div>
-                <h2>Echt klaar?</h2>
-                <p id="confirm-task-name"></p>
-                <div class="confirm-actions">
-                    <button id="confirm-no">Nog even niet</button>
-                    <button id="confirm-yes">Ja, weg ermee!</button>
-                </div>
-            </div>
-        </div>
-
         <!-- Undo toast -->
         <div id="undo-toast" class="hidden">
             <span id="undo-label"></span>
@@ -77,6 +64,19 @@
         <main id="task-list">
             <div class="loading">Laden…</div>
         </main>
+    </div>
+
+    <!-- Bevestigingsdialog afvinken — buiten #app om stacking context te vermijden -->
+    <div id="confirm-overlay" class="hidden">
+        <div id="confirm-dialog">
+            <div class="confirm-icon">✓</div>
+            <h2>Echt klaar?</h2>
+            <p id="confirm-task-name"></p>
+            <div class="confirm-actions">
+                <button id="confirm-no">Nog even niet</button>
+                <button id="confirm-yes">Ja, weg ermee!</button>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
