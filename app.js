@@ -115,6 +115,16 @@ function render() {
 
     main.innerHTML = html;
 
+    // Totaaltelling in header
+    const open = todos.filter(t => !t.completed);
+    const totalMin = open.reduce((s, t) => s + (t.duration_minutes || 0), 0);
+    const summary = document.getElementById('header-summary');
+    if (summary) {
+        const parts = [`${open.length} ${open.length === 1 ? 'taak' : 'taken'}`];
+        if (totalMin > 0) parts.push(labelDuration(totalMin));
+        summary.textContent = parts.join(' · ');
+    }
+
     // Drag-and-drop per groep (behalve klaar)
     for (const g of groups) {
         if (g.key === 'done') continue;
