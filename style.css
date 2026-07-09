@@ -22,7 +22,7 @@ body {
 }
 
 #app {
-    max-width: 640px;
+    max-width: 1200px;
     margin: 0 auto;
     padding-bottom: 60px;
 }
@@ -180,6 +180,54 @@ select:focus { border-color: var(--primary); }
 
 /* Task list */
 main { padding: 16px 20px; }
+
+@media (min-width: 860px) {
+    main {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        align-items: start;
+    }
+
+    .task-group {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 14px 14px 10px;
+    }
+
+    .task-group[data-group="none"],
+    .task-group[data-group="done"] {
+        grid-column: 1 / -1;
+    }
+
+    .empty-state { grid-column: 1 / -1; }
+    .error-banner { grid-column: 1 / -1; }
+}
+
+@media (min-width: 560px) and (max-width: 859px) {
+    main {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        align-items: start;
+    }
+
+    .task-group {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 14px 14px 10px;
+    }
+
+    .task-group[data-group="none"],
+    .task-group[data-group="done"] {
+        grid-column: 1 / -1;
+    }
+
+    .empty-state { grid-column: 1 / -1; }
+    .error-banner { grid-column: 1 / -1; }
+}
 
 .loading {
     text-align: center;
