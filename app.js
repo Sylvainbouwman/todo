@@ -48,27 +48,39 @@ function shortDate(dateStr) {
 
 function buildGroups(todos) {
     const t = todayStr();
-    const groups = {
-        overdue:  { label: 'Te laat',    sub: null,              cls: 'group-overdue', items: [] },
-        today:    { label: 'Vandaag',    sub: shortDate(t),      cls: 'group-today',   items: [] },
-        tomorrow: { label: 'Morgen',     sub: shortDate(offsetDay(1)), cls: '',         items: [] },
-        later:    { label: 'Later',      sub: null,              cls: '',              items: [] },
-        none:     { label: 'Geen datum', sub: null,              cls: '',              items: [] },
-        done:     { label: 'Klaar',      sub: null,              cls: '',              items: [] },
-    };
+    const tom = offsetDay(1);
 
-    for (const todo of todos) {
-        if (todo.completed) { groups.done.items.push(todo); continue; }
-        const d = todo.due_date;
-        if (!d)                    groups.none.items.push(todo);
-        else if (d < t)            groups.overdue.items.push(todo);
-        else if (d === t)          groups.today.items.push(todo);
-        else if (d === offsetDay(1)) groups.tomorrow.items.push(todo);
-        else                       groups.later.items.push(todo);
+    // Vaste groepen zonder datum
+    const none = { key: 'none', label: 'Geen datum', sub: null, cls: '', items: [] };
+    const done = { key: 'done', label: 'Klaar',      sub: null, cls: '', items: [] };
+
+    // Dynamisch: één groep per unieke datum
+    const byDate = {};
+    function getDateGroup(d) {
+        if (!byDate[d]) {
+            let label, sub, cls;
+            if (d === t)   { label = 'Vandaag'; sub = shortDate(d); cls = 'group-today'; }
+            else if (d === tom) { label = 'Morgen'; sub = shortDate(d); cls = ''; }
+            else if (d < t) { label = shortDate(d); sub = null; cls = 'group-overdue'; }
+            else            { label = shortDate(d); sub = null; cls = ''; }
+            byDate[d] = { key: 'date-' + d, label, sub, cls, items: [] };
+        }
+        return byDate[d];
     }
 
-    // Sorteer per groep: eerst op tijdstip, dan op positie
-    for (const g of Object.values(groups)) {
+    for (const todo of todos) {
+        if (todo.completed) { done.items.push(todo); continue; }
+        const d = todo.due_date;
+        if (!d) { none.items.push(todo); continue; }
+        getDateGroup(d).items.push(todo);
+    }
+
+    // Sorteer datumgroepen chronologisch, dan vaste groepen achteraan
+    const dateGroups = Object.keys(byDate).sort().map(d => byDate[d]);
+
+    // Sorteer taken per groep: tijdstip eerst, dan positie
+    const allGroups = [...dateGroups, none, done];
+    for (const g of allGroups) {
         g.items.sort((a, b) => {
             if (a.due_time && b.due_time) return a.due_time.localeCompare(b.due_time);
             if (a.due_time) return -1;
@@ -77,7 +89,7 @@ function buildGroups(todos) {
         });
     }
 
-    return groups;
+    return allGroups;
 }
 
 // ---- Render ----
@@ -88,32 +100,27 @@ function render() {
     sortables = [];
 
     const groups = buildGroups(todos);
-    const order = ['overdue', 'today', 'tomorrow', 'later', 'none', 'done'];
     let html = '';
     let hasOpen = false;
 
-    for (const key of order) {
-        const g = groups[key];
+    for (const g of groups) {
         if (g.items.length === 0) continue;
-        if (key !== 'done') hasOpen = true;
-
-        if (key === 'done') {
-            html += renderDoneGroup(g);
-        } else {
-            html += renderGroup(key, g);
-        }
+        if (g.key !== 'done') hasOpen = true;
+        html += g.key === 'done' ? renderDoneGroup(g) : renderGroup(g.key, g);
     }
 
-    if (!hasOpen && groups.done.items.length === 0) {
+    if (!hasOpen && !groups.find(g => g.key === 'done' && g.items.length > 0)) {
         html = `<div class="empty-state"><div class="icon">✓</div><p>Geen taken. Klik op + om er een toe te voegen.</p></div>`;
     }
 
     main.innerHTML = html;
 
-    // Drag-and-drop per groep
-    for (const key of ['overdue', 'today', 'tomorrow', 'later', 'none']) {
-        const el = document.getElementById('list-' + key);
+    // Drag-and-drop per groep (behalve klaar)
+    for (const g of groups) {
+        if (g.key === 'done') continue;
+        const el = document.getElementById('list-' + g.key);
         if (!el) continue;
+        const key = g.key;
         sortables.push(Sortable.create(el, {
             animation: 150,
             handle: '.drag-handle',
