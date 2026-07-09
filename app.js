@@ -189,12 +189,11 @@ function renderTodo(todo) {
     return `
         <div class="task-item ${todo.completed ? 'completed' : ''}" data-id="${todo.id}">
             <span class="drag-handle" title="Slepen om te herordenen">⠿</span>
-            <div class="task-check ${todo.completed ? 'done' : ''}" onclick="toggleDone_task('${todo.id}')"></div>
             <div class="task-body" onclick="openEdit('${todo.id}')">
                 <div class="task-title">${escape(todo.title)}</div>
                 ${chips.length ? `<div class="task-meta">${chips.join('')}</div>` : ''}
             </div>
-            <button class="task-del" onclick="deleteTodo('${todo.id}')" title="Verwijderen">🗑</button>
+            <div class="task-check ${todo.completed ? 'done' : ''}" onclick="toggleDone_task('${todo.id}')" title="${todo.completed ? 'Zet terug naar actief' : 'Afvinken'}"></div>
         </div>`;
 }
 

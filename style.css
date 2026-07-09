@@ -478,20 +478,6 @@ main { padding: 16px 20px; }
 
 .meta-chip.date { color: var(--primary); }
 
-.task-del {
-    background: none;
-    border: none;
-    color: #D1D5DB;
-    font-size: 0.95rem;
-    line-height: 1;
-    cursor: pointer;
-    padding: 4px 6px;
-    border-radius: 5px;
-    flex-shrink: 0;
-    transition: color 0.15s, background 0.15s;
-}
-
-.task-del:hover { color: var(--red); background: #FEE2E2; }
 
 /* Drag states */
 .sortable-ghost { opacity: 0.35; background: var(--primary-light); }
