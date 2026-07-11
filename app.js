@@ -5,6 +5,7 @@ let todos = [];
 let editingId = null;
 let doneCollapsed = true;
 let sortables = [];
+let searchQuery = '';
 
 // ---- Datum helpers ----
 
@@ -37,6 +38,86 @@ function labelDuration(min) {
     const h = Math.floor(min / 60);
     const m = min % 60;
     return m ? `${h}u ${m}m` : `${h}u`;
+}
+
+// ---- Zoeken ----
+
+function tokenize(q) {
+    return q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+}
+
+function escapeRegex(s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function matchesTodo(todo, tokens) {
+    const hay = todo.title.toLowerCase();
+    return tokens.every(t => hay.includes(t));
+}
+
+function highlightTitle(title, tokens) {
+    let html = escape(title);
+    for (const token of tokens) {
+        html = html.replace(new RegExp(escapeRegex(token), 'gi'), '<mark>$&</mark>');
+    }
+    return html;
+}
+
+function renderSearch() {
+    const tokens = tokenize(searchQuery);
+    const matches = todos.filter(t => matchesTodo(t, tokens));
+    const main = document.getElementById('task-list');
+    sortables.forEach(s => s.destroy());
+    sortables = [];
+
+    const summary = document.getElementById('header-summary');
+    if (summary) {
+        summary.textContent = matches.length
+            ? `${matches.length} ${matches.length === 1 ? 'resultaat' : 'resultaten'}`
+            : 'Niets gevonden';
+    }
+
+    if (!matches.length) {
+        main.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>Geen taken gevonden voor "<strong>${escape(searchQuery)}</strong>"</p></div>`;
+        return;
+    }
+
+    const open = matches.filter(t => !t.completed).sort((a, b) => {
+        if (a.due_date && b.due_date) return a.due_date.localeCompare(b.due_date);
+        if (a.due_date) return -1;
+        if (b.due_date) return 1;
+        return 0;
+    });
+    const done = matches.filter(t => t.completed);
+
+    const renderItem = (todo) => {
+        const chips = [];
+        if (todo.due_date) {
+            const time = todo.due_time ? ' ' + todo.due_time.slice(0, 5) : '';
+            chips.push(`<span class="meta-chip date">📅 ${labelDate(todo.due_date)}${time}</span>`);
+        }
+        if (todo.duration_minutes) {
+            chips.push(`<span class="meta-chip">⏱ ${labelDuration(todo.duration_minutes)}</span>`);
+        }
+        return `
+            <div class="task-item ${todo.completed ? 'completed' : ''}" data-id="${todo.id}">
+                <div class="task-body" onclick="openEdit('${todo.id}')">
+                    <div class="task-title">${highlightTitle(todo.title, tokens)}</div>
+                    ${chips.length ? `<div class="task-meta">${chips.join('')}</div>` : ''}
+                </div>
+                <div class="task-check ${todo.completed ? 'done' : ''}" onclick="toggleDone_task('${todo.id}')" title="${todo.completed ? 'Zet terug naar actief' : 'Afvinken'}"></div>
+            </div>`;
+    };
+
+    main.innerHTML = `<div class="search-results">${[...open, ...done].map(renderItem).join('')}</div>`;
+}
+
+function clearSearch() {
+    searchQuery = '';
+    const input = document.getElementById('search-input');
+    if (input) input.value = '';
+    document.getElementById('search-clear').classList.add('hidden');
+    render();
 }
 
 // ---- Groeperen ----
@@ -95,6 +176,7 @@ function buildGroups(todos) {
 // ---- Render ----
 
 function render() {
+    if (searchQuery.trim()) { renderSearch(); return; }
     const main = document.getElementById('task-list');
     sortables.forEach(s => s.destroy());
     sortables = [];
@@ -412,9 +494,28 @@ document.getElementById('confirm-overlay').addEventListener('click', (e) => {
     }
 });
 
+document.getElementById('search-input').addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    document.getElementById('search-clear').classList.toggle('hidden', !searchQuery);
+    render();
+});
+
+document.getElementById('search-clear').addEventListener('click', clearSearch);
+
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeModal();
     const tag = document.activeElement.tagName;
+    if (e.key === 'Escape') {
+        if (searchQuery) { clearSearch(); return; }
+        closeModal();
+        return;
+    }
+    if (e.key === '/' && tag !== 'INPUT' && tag !== 'SELECT' && tag !== 'TEXTAREA') {
+        e.preventDefault();
+        const inp = document.getElementById('search-input');
+        inp.focus();
+        inp.select();
+        return;
+    }
     if (e.key === 'n' && tag !== 'INPUT' && tag !== 'SELECT' && tag !== 'TEXTAREA') openAdd();
 });
 
