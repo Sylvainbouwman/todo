@@ -12,6 +12,8 @@ Persoonlijke takenlijst-app, toegankelijk op desktop én telefoon.
 - Slepen om volgorde te wijzigen, ook tussen verschillende dagen
 - Rondje rechts afvinken → bevestigingsdialog "Echt klaar?"
 - Afgevinkte taken staan onderaan in de Klaar-sectie (inklapbaar)
+- **Slimme zoekbalk** bovenin: live filteren op alle woorden, treffers worden geel gemarkeerd
+- Sneltoets `/` om te zoeken, `Escape` om te wissen
 - Real-time sync tussen apparaten (wijziging op telefoon → direct zichtbaar op laptop)
 - Responsive: 3 kolommen op desktop, 2 op tablet, 1 op telefoon
 
