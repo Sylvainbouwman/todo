@@ -1,0 +1,23 @@
+# Accountancy databestanden
+*.xaf
+*.XAF
+*.csv
+*.xlsx
+*.xls
+*.xml
+*.pdf
+*.docx
+
+# Configuratie en secrets
+.env
+.env.local
+*.key
+*.pem
+
+# Runtime/infra
+node_modules/
+.wrangler/
+supabase/.temp/
+*.log
+*.db
+*.sqlite
