@@ -436,12 +436,13 @@ async function onSubmit(e) {
     const duration_minutes = parseInt(document.getElementById('task-duration').value) || null;
     if (!title) return;
 
+    const currentEditingId = editingId;
     closeModal();
 
-    if (editingId) {
-        const { error } = await db.from('todos').update({ title, due_date, due_time, duration_minutes }).eq('id', editingId);
+    if (currentEditingId) {
+        const { error } = await db.from('todos').update({ title, due_date, due_time, duration_minutes }).eq('id', currentEditingId);
         if (!error) {
-            const todo = todos.find(t => t.id === editingId);
+            const todo = todos.find(t => t.id === currentEditingId);
             if (todo) Object.assign(todo, { title, due_date, due_time, duration_minutes });
             render();
         }
