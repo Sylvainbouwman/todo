@@ -28,7 +28,7 @@ Volgorde van de uitrol:
 
 - **Status:** open, gevonden op 02-10-2026
 - **Eigenaar:** Sylvain
-- **Vindplaats:** Supabase-project "Kledingkast" (tabellen `categorieen` en `items`)
+- **Vindplaats:** Supabase-project "Kledingkast"
 
 Dezelfde database hoort ook bij de kledingkast-app. Haar tabellen zijn niet aangeraakt en het toegangsbeleid
 daarvan moet in de repository van die app worden nagelopen. Het migratiescript gaat uit van precies een
