@@ -1,5 +1,31 @@
 const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// persistSession bewaart de sessie in de browser (localStorage); autoRefreshToken ververst
+// de korte toegangstoken op de achtergrond met de refresh-token, zodat inloggen eenmalig is.
+let loggedIn = false;
+let syncChannel = null;
+let handlingUnauthorized = false;
+
+// Een geweigerde dataverzoek (401) betekent dat de toegangstoken niet meer geldt en de stille
+// verversing is mislukt. Probeer dan nog een keer te verversen; lukt dat niet, terug naar inloggen.
+async function authFetch(input, init) {
+    const res = await fetch(input, init);
+    const url = typeof input === 'string' ? input : input.url;
+    if (res.status === 401 && loggedIn && !handlingUnauthorized && url.includes('/rest/v1/')) {
+        handlingUnauthorized = true;
+        setTimeout(async () => {
+            const { data, error } = await db.auth.refreshSession();
+            if (error || !data.session) await db.auth.signOut({ scope: 'local' });
+            else await load();
+            handlingUnauthorized = false;
+        }, 0);
+    }
+    return res;
+}
+
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
+    global: { fetch: authFetch },
+});
 
 let todos = [];
 let editingId = null;
@@ -458,8 +484,10 @@ async function onSubmit(e) {
 // ---- Laden ----
 
 async function load() {
-    const { data, error } = await db.from('todos').select('*').order('position').order('created_at');
+    if (!loggedIn) return;
+    const { data, error, status } = await db.from('todos').select('*').order('position').order('created_at');
     if (error) {
+        if (status === 401) return; // authFetch verwerkt dit: verversen of terug naar inloggen
         document.getElementById('task-list').innerHTML =
             `<div class="error-banner">Kan geen verbinding maken met Supabase. Controleer config.js.</div>`;
         return;
@@ -517,12 +545,74 @@ document.addEventListener('keydown', (e) => {
         inp.select();
         return;
     }
+    if (!loggedIn) return;
     if (e.key === 'n' && tag !== 'INPUT' && tag !== 'SELECT' && tag !== 'TEXTAREA') openAdd();
 });
 
-load();
+// ---- Inloggen ----
 
-// Real-time sync: als iemand op telefoon wijzigt, update automatisch op desktop
-db.channel('todos-sync')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'todos' }, load)
-    .subscribe();
+function showLogin() {
+    document.getElementById('app').classList.add('hidden');
+    document.getElementById('login-screen').classList.remove('hidden');
+}
+
+function showApp() {
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+}
+
+function setLoginError(msg) {
+    const el = document.getElementById('login-error');
+    el.textContent = msg || '';
+    el.classList.toggle('hidden', !msg);
+}
+
+async function startApp() {
+    if (loggedIn) return;
+    loggedIn = true;
+    showApp();
+    await load();
+    // Real-time sync: als iemand op telefoon wijzigt, update automatisch op desktop
+    if (!syncChannel) {
+        syncChannel = db.channel('todos-sync')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'todos' }, () => load())
+            .subscribe();
+    }
+}
+
+function stopApp() {
+    loggedIn = false;
+    todos = [];
+    if (syncChannel) { db.removeChannel(syncChannel); syncChannel = null; }
+    if (searchQuery) clearSearch();
+    document.getElementById('task-list').innerHTML = '<div class="loading">Laden…</div>';
+    document.getElementById('header-summary').textContent = '';
+    closeModal();
+    showLogin();
+}
+
+async function onLogin(e) {
+    e.preventDefault();
+    const btn = document.getElementById('login-submit');
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    setLoginError('');
+    btn.disabled = true;
+    const { error } = await db.auth.signInWithPassword({ email, password });
+    btn.disabled = false;
+    if (error) {
+        setLoginError(error.status === 400
+            ? 'Inloggen mislukt: controleer je e-mailadres en wachtwoord.'
+            : 'Inloggen mislukt: ' + error.message);
+        return;
+    }
+    document.getElementById('login-password').value = '';
+}
+
+document.getElementById('login-form').addEventListener('submit', onLogin);
+document.getElementById('btn-logout').addEventListener('click', () => db.auth.signOut());
+
+// Niet awaiten binnen deze callback (Supabase raadt dat af, het kan blokkeren): daarom setTimeout.
+db.auth.onAuthStateChange((event, session) => {
+    setTimeout(() => (session ? startApp() : stopApp()), 0);
+});
