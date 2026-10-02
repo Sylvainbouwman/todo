@@ -7,14 +7,17 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="app">
+    <div id="app" class="hidden">
         <div id="sticky-top">
             <header>
                 <div class="header-left">
                     <h1>ToDo</h1>
                     <span id="header-summary"></span>
                 </div>
-                <button id="btn-add" title="Nieuwe taak (N)">+</button>
+                <div class="header-right">
+                    <button id="btn-logout" title="Uitloggen">Uitloggen</button>
+                    <button id="btn-add" title="Nieuwe taak (N)">+</button>
+                </div>
             </header>
             <div id="search-bar">
                 <div class="search-wrap">
@@ -78,6 +81,24 @@
         </main>
     </div>
 
+    <!-- Inlogscherm: de app is pas zichtbaar na een geldige sessie -->
+    <div id="login-screen" class="hidden">
+        <form id="login-form" autocomplete="on">
+            <h1>ToDo</h1>
+            <p class="login-sub">Log in om je taken te zien.</p>
+            <div class="form-group">
+                <label for="login-email">E-mailadres</label>
+                <input type="email" id="login-email" name="email" autocomplete="username" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password">Wachtwoord</label>
+                <input type="password" id="login-password" name="password" autocomplete="current-password" required>
+            </div>
+            <div id="login-error" class="hidden" role="alert"></div>
+            <button type="submit" id="login-submit">Inloggen</button>
+        </form>
+    </div>
+
     <!-- Bevestigingsdialog afvinken — buiten #app om stacking context te vermijden -->
     <div id="confirm-overlay" class="hidden">
         <div id="confirm-dialog">
@@ -95,6 +116,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="config.js"></script>
     <script src="app.js"></script>
-<div style="position:fixed;bottom:10px;right:14px;z-index:9990;font-size:10px;color:#94a3b8;font-family:system-ui,-apple-system,sans-serif;background:rgba(255,255,255,0.8);padding:2px 6px;border-radius:4px;"><!-- LAST_UPDATED -->Laatste update: 15 jul 2026, 14:42</div>
+<div style="position:fixed;bottom:10px;right:14px;z-index:9990;font-size:10px;color:#94a3b8;font-family:system-ui,-apple-system,sans-serif;background:rgba(255,255,255,0.8);padding:2px 6px;border-radius:4px;"><!-- LAST_UPDATED -->Laatste update: 2 okt 2026, 18:57</div>
 </body>
 </html>

@@ -39,6 +39,14 @@ const SUPABASE_URL = 'https://xxxx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJ...';
 ```
 
+## Inloggen
+
+De planner vraagt om e-mailadres en wachtwoord (Supabase Auth). De sessie blijft in de browser staan en
+wordt op de achtergrond vernieuwd, dus inloggen is per apparaat eenmalig. Het account maak je zelf aan in
+het Supabase-dashboard; registratie door anderen staat uit.
+
 ## Database
 
-Voer `schema.sql` eenmalig uit in de Supabase SQL Editor om de `todos`-tabel aan te maken.
+Voer `schema.sql` eenmalig uit in de Supabase SQL Editor om de `todos`-tabel aan te maken. Het beleid
+daarin laat alleen de ingelogde eigenaar bij zijn eigen taken. Een bestaande database met taken zet je om
+met `migratie-eigenaar.sql`.
