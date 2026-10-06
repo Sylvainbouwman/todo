@@ -1,0 +1,35 @@
+name: Houd Supabase wakker
+
+# Een gratis Supabase-project pauzeert na ongeveer een week zonder activiteit.
+# Deze workflow doet dagelijks een lichte leesaanroep met de openbare sleutel uit config.js
+# (zonder inlog, dus zonder inhoud terug te krijgen). Er is geen secret voor nodig.
+
+on:
+  schedule:
+    - cron: '17 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lichte aanroep
+        run: |
+          python3 - <<'PY'
+          import re, sys, urllib.request
+          src = open("config.js", encoding="utf-8").read()
+          strs = re.findall(r"['\"]([^'\"]+)['\"]", src)
+          url = next(s for s in strs if s.startswith("http"))
+          key = next(s for s in strs if s.startswith("eyJ") or s.startswith("sb_"))
+          req = urllib.request.Request(
+              url + "/rest/v1/todos?select=id&limit=1",
+              headers={"apikey": key, "Authorization": "Bearer " + key},
+          )
+          status = urllib.request.urlopen(req, timeout=30).status
+          print("status", status)
+          sys.exit(0 if status == 200 else 1)
+          PY
