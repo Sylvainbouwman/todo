@@ -38,3 +38,9 @@ Bewijs op 02-10-2026: na de migratie geeft een telling zonder inlog 0 rijen teru
 planner, ziet al zijn taken en kan afvinken; de openbare instelling `disable_signup` staat op `true`, dus
 nieuwe registraties zijn uit. Niet gemeten: schrijven zonder inlog tegen een bestaande taak (dat zou de
 echte taken raken).
+
+Hermeting op 06-10-2026 22:36 CEST, zonder inlog en alleen met de openbare sleutel: lezen van `todos` geeft
+0 rijen (status 200), een wijziging en een verwijdering tegen een niet-bestaande id geven elk een lege lijst
+terug, `disable_signup` staat nog op `true` en de openbare sleutel ziet geen enkele tabel. Het beleid
+"Eigen taken" in `schema.sql` geldt alleen voor de rol `authenticated`. Er is niets geschreven naar de echte
+taken. Geen datalek gevonden.
