@@ -2,19 +2,6 @@
 
 ## Open
 
-### 3. Het gratis project pauzeert na een week zonder gebruik
-
-- **Status:** open, besluit 06-10-2026 van Sylvain: de workflow bouwen. Gebouwd in `.github/workflows/wakker.yml`
-  (dagelijks 05:17 UTC, leest de openbare sleutel uit `config.js`, geen secret nodig). Sluit na de merge en een
-  geslaagde eerste run (handmatig te starten via Actions, "Houd Supabase wakker").
-- **Eigenaar:** Sylvain
-- **Vindplaats:** `.github/workflows/wakker.yml`; Supabase-dashboard
-
-Een gratis Supabase-project pauzeert na ongeveer een week zonder activiteit. Zolang het pauzeert kan de
-planner geen taken laden, ook niet met een geldige sessie. Je blijft wel ingelogd: de sessie staat in de
-browser en in de database van Supabase, en werkt weer na het hervatten. Let op: GitHub zet een geplande workflow in een openbare repository stil na 60 dagen zonder
-activiteit in de repository; dan moet hij in Actions opnieuw worden ingeschakeld.
-
 ## Gesloten
 
 ### 1. De database stond voor iedereen open
@@ -48,3 +35,14 @@ Bewijs op 06-10-2026: de tabel `todos` is anoniem niet leesbaar (zie punt 1). Bi
 van de kledingkast (`items`, `categorieen`) en de bucket `fotos` zonder inlog wel leesbaar zijn (aantallen
 gemeten, geen inhoud gelezen). Besluit 06-10-2026 van Sylvain: een eigen sessie in de kledingkast-repository voegt
 een inlog toe en sluit het beleid. Het migratiescript gaat nog uit van precies een gebruiker in het project.
+
+### 3. Het gratis project pauzeert na een week zonder gebruik
+
+- **Status:** gesloten op 06-10-2026 22:52 CEST: de wekker staat op `master` en de eerste handmatige run is geslaagd (Actions-run 37529624204, status success). Besluit 06-10-2026 van Sylvain: de workflow bouwen.
+- **Eigenaar:** Sylvain
+- **Vindplaats:** `.github/workflows/wakker.yml`; Supabase-dashboard
+
+Een gratis Supabase-project pauzeert na ongeveer een week zonder activiteit. Zolang het pauzeert kan de
+planner geen taken laden, ook niet met een geldige sessie. Je blijft wel ingelogd: de sessie staat in de
+browser en in de database van Supabase, en werkt weer na het hervatten. Let op: GitHub zet een geplande workflow in een openbare repository stil na 60 dagen zonder
+activiteit in de repository; dan moet hij in Actions opnieuw worden ingeschakeld.
