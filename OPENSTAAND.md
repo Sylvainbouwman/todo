@@ -14,13 +14,16 @@ gebruiker in dat project; komt er een tweede account bij (bijvoorbeeld voor die 
 
 ### 3. Het gratis project pauzeert na een week zonder gebruik
 
-- **Status:** open, voorstel wacht op akkoord van Sylvain
+- **Status:** open, besluit 06-10-2026 van Sylvain: de workflow bouwen. Gebouwd in `.github/workflows/wakker.yml`
+  (dagelijks 05:17 UTC, leest de openbare sleutel uit `config.js`, geen secret nodig). Sluit na de merge en een
+  geslaagde eerste run (handmatig te starten via Actions, "Houd Supabase wakker").
 - **Eigenaar:** Sylvain
-- **Vindplaats:** Supabase-dashboard; voorstel: een geplande GitHub-workflow die dagelijks een lichte aanroep doet
+- **Vindplaats:** `.github/workflows/wakker.yml`; Supabase-dashboard
 
 Een gratis Supabase-project pauzeert na ongeveer een week zonder activiteit. Zolang het pauzeert kan de
 planner geen taken laden, ook niet met een geldige sessie. Je blijft wel ingelogd: de sessie staat in de
-browser en in de database van Supabase, en werkt weer na het hervatten.
+browser en in de database van Supabase, en werkt weer na het hervatten. Let op: GitHub zet een geplande workflow in een openbare repository stil na 60 dagen zonder
+activiteit in de repository; dan moet hij in Actions opnieuw worden ingeschakeld.
 
 ## Gesloten
 
