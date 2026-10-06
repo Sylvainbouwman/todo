@@ -2,16 +2,6 @@
 
 ## Open
 
-### 2. Het Supabase-project wordt gedeeld met de kledingkast-app
-
-- **Status:** open, gevonden op 02-10-2026
-- **Eigenaar:** Sylvain
-- **Vindplaats:** Supabase-project "Kledingkast"
-
-Dezelfde database hoort ook bij de kledingkast-app. Haar tabellen zijn niet aangeraakt en het toegangsbeleid
-daarvan moet in de repository van die app worden nagelopen. Het migratiescript gaat uit van precies een
-gebruiker in dat project; komt er een tweede account bij (bijvoorbeeld voor die app), dan stopt het.
-
 ### 3. Het gratis project pauzeert na een week zonder gebruik
 
 - **Status:** open, besluit 06-10-2026 van Sylvain: de workflow bouwen. Gebouwd in `.github/workflows/wakker.yml`
@@ -47,3 +37,14 @@ Hermeting op 06-10-2026 22:36 CEST, zonder inlog en alleen met de openbare sleut
 terug, `disable_signup` staat nog op `true` en de openbare sleutel ziet geen enkele tabel. Het beleid
 "Eigen taken" in `schema.sql` geldt alleen voor de rol `authenticated`. Er is niets geschreven naar de echte
 taken. Geen datalek gevonden.
+
+### 2. Het Supabase-project wordt gedeeld met de kledingkast-app
+
+- **Status:** gesloten op 06-10-2026: het gedeelde project is nagelopen voor de planner en het beleid van de kledingkast is een eigen punt in haar repository geworden.
+- **Eigenaar:** Sylvain
+- **Vindplaats:** `Sylvainbouwman/kledingkast`, `OPENSTAAND.md` punt 1 (branch `docs/openstaand-rls-anoniem`)
+
+Bewijs op 06-10-2026: de tabel `todos` is anoniem niet leesbaar (zie punt 1). Bij het nalopen bleek dat de tabellen
+van de kledingkast (`items`, `categorieen`) en de bucket `fotos` zonder inlog wel leesbaar zijn (aantallen
+gemeten, geen inhoud gelezen). Besluit 06-10-2026 van Sylvain: een eigen sessie in de kledingkast-repository voegt
+een inlog toe en sluit het beleid. Het migratiescript gaat nog uit van precies een gebruiker in het project.
